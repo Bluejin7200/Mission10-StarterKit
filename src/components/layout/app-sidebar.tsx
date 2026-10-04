@@ -22,7 +22,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { siteConfig } from "@/config/site"
-import { useSetSession } from "@/hooks/use-session"
+import { notifySessionChange } from "@/hooks/use-logged-in"
 import { usePreferencesHydrated } from "@/hooks/use-store-hydrated"
 import { logout } from "@/lib/api/auth"
 import type { Session } from "@/lib/auth/session"
@@ -36,7 +36,6 @@ type AppSidebarProps = {
 export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const setSession = useSetSession()
 
   // 설정 화면에서 지정한 표시 이름이 있으면 세션 이름보다 우선
   const hydrated = usePreferencesHydrated()
@@ -46,7 +45,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      setSession(null)
+      notifySessionChange()
       toast.success("로그아웃했습니다.")
       router.replace("/")
       router.refresh()

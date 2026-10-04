@@ -11,7 +11,7 @@ import { FormInput } from "@/components/form/form-input"
 import { Button } from "@/components/ui/button"
 import { FieldGroup } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { useSetSession } from "@/hooks/use-session"
+import { notifySessionChange } from "@/hooks/use-logged-in"
 import { login } from "@/lib/api/auth"
 import { loginSchema, type LoginValues } from "@/lib/validations/auth"
 
@@ -23,7 +23,6 @@ type LoginFormProps = {
 // 로그인 폼: 데모 로그인 API 호출 후 세션 쿠키가 설정되면 원래 페이지로 이동
 export function LoginForm({ redirectTo }: LoginFormProps) {
   const router = useRouter()
-  const setSession = useSetSession()
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", remember: false },
@@ -32,7 +31,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: ({ user }) => {
-      setSession(user)
+      notifySessionChange()
       toast.success(`${user.name}님, 환영합니다.`)
       // 서버 컴포넌트가 새 세션을 읽도록 이동 후 갱신
       router.replace(redirectTo)

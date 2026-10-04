@@ -14,13 +14,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { siteConfig } from "@/config/site"
-import { useSession } from "@/hooks/use-session"
+import { useLoggedIn } from "@/hooks/use-logged-in"
 
 // 모바일(md 미만) 전용 슬라이드 메뉴
 export function MobileNav() {
   const [open, setOpen] = useState(false)
-  const { user } = useSession()
-  const isLoggedIn = Boolean(user)
+  const isLoggedIn = useLoggedIn()
   const close = () => setOpen(false)
 
   return (

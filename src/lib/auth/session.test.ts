@@ -2,20 +2,50 @@ import { describe, expect, it } from "vitest"
 
 import { decodeSession, encodeSession, getSafeRedirect } from "@/lib/auth/session"
 
-describe("세션 인코딩", () => {
+const user = { name: "테스터", email: "tester@example.com" }
+const NOW = new Date("2026-10-05T12:00:00Z").getTime()
+
+// 쿠키 값의 payload 부분만 바꿔치기 (서명은 그대로) → 위조 시도 흉내
+function tamper(cookie: string, payload: object) {
+  const [, signature] = cookie.split(".")
+  return `${Buffer.from(JSON.stringify(payload)).toString("base64url")}.${signature}`
+}
+
+describe("서명된 세션 쿠키", () => {
   it("인코딩한 세션을 그대로 복원한다", () => {
-    const session = { name: "테스터", email: "tester@example.com" }
-    expect(decodeSession(encodeSession(session))).toEqual(session)
+    expect(decodeSession(encodeSession(user, 60, NOW), NOW)).toEqual(user)
+  })
+
+  it("payload와 서명 두 부분으로 구성된다", () => {
+    expect(encodeSession(user, 60, NOW).split(".")).toHaveLength(2)
+  })
+
+  it("payload를 바꾸면(다른 사용자로 위조) 거부한다", () => {
+    const forged = tamper(encodeSession(user, 60, NOW), {
+      user: { name: "관리자", email: "admin@example.com" },
+      exp: Math.floor(NOW / 1000) + 60,
+    })
+    expect(decodeSession(forged, NOW)).toBeNull()
+  })
+
+  it("만료 시각을 늘리는 위조도 거부한다", () => {
+    const forged = tamper(encodeSession(user, 60, NOW), { user, exp: Math.floor(NOW / 1000) + 999_999 })
+    expect(decodeSession(forged, NOW)).toBeNull()
+  })
+
+  it("만료된 세션은 거부한다", () => {
+    const cookie = encodeSession(user, 60, NOW)
+    expect(decodeSession(cookie, NOW + 59_000)).toEqual(user)
+    expect(decodeSession(cookie, NOW + 60_000)).toBeNull()
   })
 
   it.each([
     ["값 없음", undefined],
-    ["base64가 아님", "!!!"],
-    ["JSON이 아님", Buffer.from("hello").toString("base64url")],
-    ["필드 누락", Buffer.from(JSON.stringify({ name: "x" })).toString("base64url")],
-    ["이메일 형식 오류", Buffer.from(JSON.stringify({ name: "x", email: "x" })).toString("base64url")],
+    ["서명 없음", Buffer.from(JSON.stringify({ user, exp: 9_999_999_999 })).toString("base64url")],
+    ["점이 너무 많음", "a.b.c"],
+    ["잘못된 서명", "eyJ9.invalid-signature"],
   ])("잘못된 쿠키(%s)는 null을 반환한다", (_, value) => {
-    expect(decodeSession(value)).toBeNull()
+    expect(decodeSession(value, NOW)).toBeNull()
   })
 })
 
