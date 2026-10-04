@@ -1,10 +1,13 @@
-import { apiPost } from "@/lib/api/client"
+import { queryOptions } from "@tanstack/react-query"
+
+import { apiFetch, apiPost } from "@/lib/api/client"
 import type { Session } from "@/lib/auth/session"
 import type { LoginValues, SignupValues } from "@/lib/validations/auth"
 
 // 인증 API 호출 함수 (실제 인증 서비스로 교체 시 이 파일만 수정)
 
 type UserResponse = { user: Session }
+type SessionResponse = { user: Session | null }
 
 export function login(values: LoginValues) {
   return apiPost<UserResponse>("/api/auth/login", values)
@@ -17,3 +20,11 @@ export function signup(values: SignupValues) {
 export function logout() {
   return apiPost<{ ok: boolean }>("/api/auth/logout")
 }
+
+/** 현재 로그인 사용자 조회 쿼리 (로그인/로그아웃 시 setQueryData로 즉시 갱신) */
+export const sessionQueryOptions = queryOptions({
+  queryKey: ["session"],
+  queryFn: () => apiFetch<SessionResponse>("/api/auth/session"),
+  select: (data) => data.user,
+  staleTime: 5 * 60 * 1000,
+})
