@@ -10,6 +10,7 @@ export type Feature = {
   icon: LucideIcon
   title: string
   description: string
+  href?: string
 }
 
 type FeatureGridProps = {

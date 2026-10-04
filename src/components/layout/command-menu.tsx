@@ -17,6 +17,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
+import { exampleFeatures } from "@/config/examples"
 import { siteConfig } from "@/config/site"
 
 const themeOptions = [
@@ -25,7 +26,7 @@ const themeOptions = [
   { value: "system", label: "시스템 테마", icon: Laptop },
 ] as const
 
-// ⌘K / Ctrl+K 커맨드 팔레트: 페이지 이동, 테마 전환
+// ⌘K / Ctrl+K 커맨드 팔레트: 페이지 이동, 예제 검색, 테마 전환
 export function CommandMenu() {
   const [open, setOpen] = useState(false)
   const router = useRouter()
@@ -87,6 +88,25 @@ export function CommandMenu() {
                   {item.title}
                 </CommandItem>
               ))}
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="예제">
+              {exampleFeatures.flatMap((feature) =>
+                feature.examples.map((example) => (
+                  <CommandItem
+                    key={`${feature.slug}/${example.id}`}
+                    // 기능명·예제명·설명 모두로 검색되도록 value 지정
+                    value={`${feature.title} ${example.title} ${example.description}`}
+                    onSelect={() => run(() => router.push(`/examples/${feature.slug}#${example.id}`))}
+                  >
+                    <feature.icon />
+                    <span className="truncate">
+                      {example.title}
+                      <span className="ml-2 text-xs text-muted-foreground">{feature.title}</span>
+                    </span>
+                  </CommandItem>
+                ))
+              )}
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="테마">

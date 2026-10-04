@@ -28,6 +28,7 @@ Next.js 16 기반의 모던 웹 스타터킷입니다. 마케팅 페이지, 인�
 | 폼·검증 | React Hook Form, Zod 4, @hookform/resolvers |
 | 상태 관리 | Zustand (클라이언트), TanStack Query (서버 상태), nuqs (URL 상태) |
 | 유틸리티 | date-fns, es-toolkit, usehooks-ts, cmdk |
+| 코드 강조 | shiki (예제 페이지, 빌드 시 서버에서 실행) |
 | 테마·알림 | next-themes, sonner |
 | 테스트 | Vitest |
 
@@ -65,12 +66,15 @@ npm run dev                  # http://localhost:3000
 | 경로 | 설명 | 접근 |
 | --- | --- | --- |
 | `/` | 랜딩 페이지 (Hero, 통계, 기능, FAQ, CTA) | 누구나 |
+| `/examples` | 기능별 예제 목록 | 누구나 |
+| `/examples/[기능]` | 기능별 동작 예제 + 소스 코드 (9개 기능, 21개 예제) | 누구나 |
 | `/login` | 로그인 | 비로그인 사용자 |
 | `/signup` | 회원가입 | 비로그인 사용자 |
 | `/dashboard` | 대시보드 홈 (통계 카드, 최근 주문) | 로그인 필요 |
 | `/dashboard/orders` | 주문 목록 (검색·필터·페이지네이션) | 로그인 필요 |
 | `/dashboard/settings` | 환경설정 | 로그인 필요 |
 | `/api/auth/login` · `signup` · `logout` | 인증 API (POST) | — |
+| `/api/auth/session` | 현재 로그인 사용자 조회 (GET) | — |
 | `/api/orders` | 주문 목록 API (GET) | 로그인 필요 |
 
 - 로그인하지 않고 `/dashboard`에 접근하면 `src/proxy.ts`가 `/login?next=원래경로`로 보내고, 로그인 후 원래 페이지로 돌아옵니다.
@@ -81,7 +85,7 @@ npm run dev                  # http://localhost:3000
 ```
 src/
 ├─ app/
-│  ├─ (marketing)/          # 헤더·푸터가 있는 마케팅 영역 (홈)
+│  ├─ (marketing)/          # 헤더·푸터가 있는 마케팅 영역 (홈, 예제) — 정적 생성
 │  ├─ (auth)/               # 화면 중앙 카드 레이아웃 (로그인, 회원가입)
 │  ├─ dashboard/            # 사이드바 레이아웃 (대시보드, 주문, 설정)
 │  │  ├─ loading.tsx        # 페이지 전환 스켈레톤
@@ -97,9 +101,13 @@ src/
 │  ├─ layout/               # 헤더, 푸터, 사이드바, 대시보드 헤더, 커맨드 팔레트 등
 │  ├─ sections/             # 마케팅 섹션 (hero, stats, feature-grid, faq, cta)
 │  ├─ motion/               # 애니메이션 (FadeIn, Stagger, AnimatedNumber)
+│  ├─ examples/             # 예제 페이지 UI (ExampleBlock, 기능 목록, 오류 격리)
 │  ├─ auth/ · orders/ · settings/   # 기능별 컴포넌트
 │  └─ providers.tsx         # 테마 → Query → nuqs → Motion → Tooltip
-├─ config/site.ts           # 사이트 이름, 설명, 상단 메뉴, 대시보드 메뉴
+├─ config/
+│  ├─ site.ts               # 사이트 이름, 설명, 상단 메뉴, 대시보드 메뉴
+│  └─ examples.ts           # 예제 레지스트리 (기능·예제 메타데이터)
+├─ examples/                # 예제 소스 (<기능>/<예제>.tsx) + registry.tsx (컴포넌트 매핑)
 ├─ hooks/                   # 커스텀 훅 (모바일 감지, 스토어 복원, 주문 URL 조건)
 ├─ lib/
 │  ├─ api/                  # API 호출 함수 (클라이언트) + Route Handler 공통 헬퍼
@@ -118,7 +126,8 @@ src/
 - **데이터 목록**: TanStack Query로 조회, 검색어(디바운스)·상태 필터·페이지를 URL에 동기화 → 새로고침·링크 공유 시 조건 유지, 로딩 스켈레톤·빈 상태·에러 재시도
 - **폼**: Zod 스키마 + React Hook Form 필드 컴포넌트, 한국어 오류 메시지
 - **환경설정**: Zustand persist로 localStorage 저장, 설정한 표시 이름을 사이드바에 반영
-- **커맨드 팔레트**: 대시보드에서 `⌘K` / `Ctrl+K`로 페이지 이동·테마 전환
+- **기능별 예제**: 기능마다 1~3개의 동작 예제, 미리보기/코드 탭, 코드 복사. 코드 탭은 실제 예제 파일을 빌드 시 읽어 표시하므로 설명과 코드가 어긋나지 않음
+- **커맨드 팔레트**: `⌘K` / `Ctrl+K`로 페이지 이동·예제 검색·테마 전환 (헤더 어디서나)
 - **애니메이션**: 스크롤 진입 페이드, 카드 순차 등장, 숫자 카운트업. OS의 "동작 줄이기" 설정을 존중
 - **반응형**: 모바일 메뉴(Sheet), 모바일에서 자동으로 Sheet로 바뀌는 사이드바, 반응형 그리드
 - **다크 모드**: 라이트/다크/시스템 테마
@@ -157,6 +166,15 @@ export default function ReportsPage() {
 
 1. `src/app/api/<이름>/route.ts`에 Route Handler를 작성합니다. 요청 본문은 `parseBody(request, schema)`, 오류 응답은 `apiError(message, status)`를 사용합니다. (`src/lib/api/response.ts`)
 2. 클라이언트 호출 함수는 `src/lib/api/<이름>.ts`에 `apiFetch` / `apiPost`로 작성하고, 조회는 `queryOptions`로 묶습니다. (예: `src/lib/api/orders.ts`)
+
+### 예제 추가
+
+1. `src/examples/<기능 slug>/<예제 id>.tsx`에 예제 컴포넌트를 `export default`로 작성합니다. (복사해 쓸 수 있도록 한 파일에서 완결되게)
+2. `src/config/examples.ts`의 해당 기능 `examples`에 `{ id, title, description }`을 추가합니다. 보조 파일이 있으면 `files`에 함께 적습니다.
+3. `src/examples/registry.tsx`의 `exampleComponents`에 `"<slug>/<id>": 컴포넌트`를 등록합니다.
+4. `npm test`의 레지스트리 무결성 테스트가 파일 누락·미등록·id 중복을 검사합니다.
+
+새 기능을 추가하면 홈 기능 카드, `/examples` 목록, 커맨드 팔레트에 자동으로 나타납니다.
 
 ### 전역 상태 추가
 
@@ -208,7 +226,7 @@ npm test             # 1회 실행
 npm run test:watch   # 변경 감시
 ```
 
-테스트 파일은 대상 파일 옆에 `*.test.ts`로 둡니다. 현재 검증 스키마, 포맷 유틸, 주문 조회 로직, 페이지 번호 계산, 세션 처리에 대한 단위 테스트가 있습니다. 날짜 테스트가 실행 환경에 영향받지 않도록 `vitest.config.mts`에서 시간대를 `Asia/Seoul`로 고정합니다.
+테스트 파일은 대상 파일 옆에 `*.test.ts`로 둡니다. 현재 검증 스키마, 포맷 유틸, 주문 조회 로직, 페이지 번호 계산, 세션 처리, 예제 레지스트리 무결성에 대한 단위 테스트가 있습니다. 날짜 테스트가 실행 환경에 영향받지 않도록 `vitest.config.mts`에서 시간대를 `Asia/Seoul`로 고정합니다.
 
 ## 보안 점검 (npm audit)
 

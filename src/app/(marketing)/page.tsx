@@ -1,15 +1,5 @@
 import Link from "next/link"
-import {
-  ArrowRight,
-  Database,
-  FormInput,
-  Layers,
-  Moon,
-  Palette,
-  Rocket,
-  ShieldCheck,
-  Smartphone,
-} from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
 import { Cta } from "@/components/sections/cta"
 import { Faq, type FaqItem } from "@/components/sections/faq"
@@ -17,59 +7,24 @@ import { FeatureGrid, type Feature } from "@/components/sections/feature-grid"
 import { Hero } from "@/components/sections/hero"
 import { Stats, type StatItem } from "@/components/sections/stats"
 import { buttonVariants } from "@/components/ui/button"
+import { exampleCount, exampleFeatures } from "@/config/examples"
 import { cn } from "@/lib/utils"
 
 // 핵심 수치
 const stats: StatItem[] = [
   { label: "UI 컴포넌트", value: "40+" },
-  { label: "폼 필드 컴포넌트", value: "5" },
+  { label: "기능별 예제", value: String(exampleCount) },
   { label: "TypeScript", value: "100%" },
   { label: "지원 테마", value: "3" },
 ]
 
-// 랜딩 페이지에 노출할 기능 목록
-const features: Feature[] = [
-  {
-    icon: Rocket,
-    title: "Next.js App Router",
-    description: "서버 컴포넌트와 파일 기반 라우팅으로 빠르게 페이지를 구성합니다.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "TypeScript",
-    description: "엄격한 타입 검사로 안전하고 유지보수하기 쉬운 코드를 작성합니다.",
-  },
-  {
-    icon: Palette,
-    title: "Tailwind CSS",
-    description: "유틸리티 클래스와 디자인 토큰으로 일관된 스타일을 유지합니다.",
-  },
-  {
-    icon: Layers,
-    title: "shadcn/ui",
-    description: "복사해서 소유하는 접근성 높은 컴포넌트를 자유롭게 커스터마이징합니다.",
-  },
-  {
-    icon: FormInput,
-    title: "React Hook Form + Zod",
-    description: "스키마 기반 검증과 재사용 가능한 폼 필드 컴포넌트를 제공합니다.",
-  },
-  {
-    icon: Database,
-    title: "Zustand + TanStack Query",
-    description: "클라이언트 상태와 서버 상태를 각각 알맞은 도구로 관리합니다.",
-  },
-  {
-    icon: Moon,
-    title: "다크 모드",
-    description: "next-themes 기반 라이트/다크/시스템 테마를 기본 제공합니다.",
-  },
-  {
-    icon: Smartphone,
-    title: "반응형 레이아웃",
-    description: "모바일 메뉴, 접히는 사이드바, 반응형 그리드로 모든 화면에 대응합니다.",
-  },
-]
+// 랜딩 페이지에 노출할 기능 목록 (예제 레지스트리와 공유, 카드마다 예제 링크)
+const features: Feature[] = exampleFeatures.map(({ slug, title, description, icon }) => ({
+  icon,
+  title,
+  description,
+  href: `/examples/${slug}`,
+}))
 
 // 자주 묻는 질문
 const faqs: FaqItem[] = [
@@ -121,10 +76,10 @@ export default function Home() {
               시작하기 <ArrowRight />
             </Link>
             <Link
-              href="/dashboard"
+              href="/examples"
               className={cn(buttonVariants({ size: "lg", variant: "outline" }), "px-4")}
             >
-              대시보드 보기
+              예제 보기
             </Link>
           </>
         }

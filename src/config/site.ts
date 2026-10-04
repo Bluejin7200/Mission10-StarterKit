@@ -22,6 +22,7 @@ export const siteConfig = {
   mainNav: [
     { title: "홈", href: "/" },
     { title: "기능", href: "/#features" },
+    { title: "예제", href: "/examples" },
     { title: "FAQ", href: "/#faq" },
   ] satisfies NavItem[],
   // 대시보드 사이드바 메뉴
