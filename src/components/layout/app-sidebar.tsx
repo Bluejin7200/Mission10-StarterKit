@@ -22,8 +22,10 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { siteConfig } from "@/config/site"
+import { usePreferencesHydrated } from "@/hooks/use-store-hydrated"
 import { logout } from "@/lib/api/auth"
 import type { Session } from "@/lib/auth/session"
+import { usePreferencesStore } from "@/stores/preferences-store"
 
 type AppSidebarProps = {
   user: Session
@@ -33,6 +35,11 @@ type AppSidebarProps = {
 export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+
+  // 설정 화면에서 지정한 표시 이름이 있으면 세션 이름보다 우선
+  const hydrated = usePreferencesHydrated()
+  const preferredName = usePreferencesStore((state) => state.displayName)
+  const displayName = hydrated && preferredName ? preferredName : user.name
 
   const logoutMutation = useMutation({
     mutationFn: logout,
@@ -80,10 +87,10 @@ export function AppSidebar({ user }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" tooltip="사용자">
               <Avatar className="size-8">
-                <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{displayName}</span>
                 <span className="truncate text-xs text-muted-foreground">
                   {user.email}
                 </span>

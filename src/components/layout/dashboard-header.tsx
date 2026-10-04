@@ -4,6 +4,7 @@ import { Fragment } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+import { CommandMenu } from "@/components/layout/command-menu"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {
   Breadcrumb,
@@ -29,7 +30,7 @@ function useBreadcrumbs() {
   })
 }
 
-// 대시보드 상단 바: 사이드바 토글 + breadcrumb + 테마 토글
+// 대시보드 상단 바: 사이드바 토글 + breadcrumb + 커맨드 팔레트 + 테마 토글
 export function DashboardHeader() {
   const crumbs = useBreadcrumbs()
 
@@ -58,6 +59,7 @@ export function DashboardHeader() {
           })}
         </BreadcrumbList>
       </Breadcrumb>
+      <CommandMenu />
       <ThemeToggle />
     </header>
   )
