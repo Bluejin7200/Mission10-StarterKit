@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react"
-import { LayoutDashboard, Settings } from "lucide-react"
+import { LayoutDashboard, Settings, ShoppingCart } from "lucide-react"
 
 import { env } from "@/lib/env"
 
@@ -27,6 +27,7 @@ export const siteConfig = {
   // 대시보드 사이드바 메뉴
   dashboardNav: [
     { title: "대시보드", href: "/dashboard", icon: LayoutDashboard },
+    { title: "주문", href: "/dashboard/orders", icon: ShoppingCart },
     { title: "설정", href: "/dashboard/settings", icon: Settings },
   ] satisfies SidebarNavItem[],
   links: {

@@ -1,11 +1,14 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import { Activity, CreditCard, ShoppingCart, Users } from "lucide-react"
 
 import { PageHeader } from "@/components/common/page-header"
-import { Badge } from "@/components/ui/badge"
+import { OrderStatusBadge } from "@/components/orders/order-status-badge"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -20,6 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { formatCurrency, formatDate, formatNumber } from "@/lib/format"
+import { queryOrders } from "@/lib/mock/orders"
 
 export const metadata: Metadata = {
   title: "대시보드",
@@ -32,16 +36,6 @@ type StatCard = {
   icon: LucideIcon
 }
 
-type OrderStatus = "완료" | "처리 중" | "취소"
-
-type Order = {
-  id: string
-  customer: string
-  amount: number
-  status: OrderStatus
-  date: string
-}
-
 // 샘플 통계 데이터
 const statCards: StatCard[] = [
   { title: "총 매출", value: formatCurrency(45231000), change: "+20.1%", icon: CreditCard },
@@ -50,23 +44,10 @@ const statCards: StatCard[] = [
   { title: "활성 사용자", value: formatNumber(573), change: "+2.1%", icon: Activity },
 ]
 
-// 샘플 최근 주문 데이터
-const recentOrders: Order[] = [
-  { id: "ORD-1024", customer: "김민준", amount: 128000, status: "완료", date: "2026-10-03" },
-  { id: "ORD-1023", customer: "이서연", amount: 54000, status: "처리 중", date: "2026-10-03" },
-  { id: "ORD-1022", customer: "박지호", amount: 312000, status: "완료", date: "2026-10-02" },
-  { id: "ORD-1021", customer: "최수아", amount: 23000, status: "취소", date: "2026-10-01" },
-  { id: "ORD-1020", customer: "정도윤", amount: 89000, status: "완료", date: "2026-09-30" },
-]
-
-// 주문 상태별 배지 스타일
-const statusVariant: Record<OrderStatus, "default" | "secondary" | "destructive"> = {
-  완료: "default",
-  "처리 중": "secondary",
-  취소: "destructive",
-}
-
 export default function DashboardPage() {
+  // 서버 컴포넌트에서 목업 데이터 소스를 직접 조회 (주문 페이지와 같은 데이터)
+  const { items: recentOrders } = queryOrders({ q: "", page: 1, pageSize: 5 })
+
   return (
     <>
       <PageHeader title="대시보드" description="서비스 현황을 한눈에 확인하세요." />
@@ -91,6 +72,11 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle>최근 주문</CardTitle>
           <CardDescription>최근 5건의 주문 내역입니다.</CardDescription>
+          <CardAction>
+            <Link href="/dashboard/orders" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              전체 보기
+            </Link>
+          </CardAction>
         </CardHeader>
         <CardContent>
           <Table>
@@ -109,9 +95,9 @@ export default function DashboardPage() {
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>{order.customer}</TableCell>
                   <TableCell>
-                    <Badge variant={statusVariant[order.status]}>{order.status}</Badge>
+                    <OrderStatusBadge status={order.status} />
                   </TableCell>
-                  <TableCell>{formatDate(order.date)}</TableCell>
+                  <TableCell>{formatDate(order.createdAt)}</TableCell>
                   <TableCell className="text-right">{formatCurrency(order.amount)}</TableCell>
                 </TableRow>
               ))}
