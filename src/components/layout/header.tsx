@@ -6,7 +6,9 @@ import { MainNav } from "@/components/layout/main-nav"
 import { MobileNav } from "@/components/layout/mobile-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
+// cva는 className을 단순 연결하므로 display 충돌 방지를 위해 cn으로 병합
 // 상단 고정 헤더: 로고, 데스크톱 내비게이션, 테마 토글, 로그인/대시보드 버튼, 모바일 메뉴
 export function Header() {
   return (
@@ -21,16 +23,16 @@ export function Header() {
           <ThemeToggle />
           <Link
             href="/login"
-            className={buttonVariants({
-              variant: "ghost",
-              className: "hidden md:inline-flex",
-            })}
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "hidden md:inline-flex"
+            )}
           >
             로그인
           </Link>
           <Link
             href="/dashboard"
-            className={buttonVariants({ className: "hidden md:inline-flex" })}
+            className={cn(buttonVariants(), "hidden md:inline-flex")}
           >
             대시보드
           </Link>

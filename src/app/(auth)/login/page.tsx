@@ -14,9 +14,12 @@ export default function LoginPage() {
       title="로그인"
       description="이메일과 비밀번호를 입력해주세요."
       footer={
-        <Link href="/" className="underline-offset-4 hover:text-foreground hover:underline">
-          홈으로 돌아가기
-        </Link>
+        <p>
+          계정이 없으신가요?{" "}
+          <Link href="/signup" className="font-medium text-foreground underline-offset-4 hover:underline">
+            회원가입
+          </Link>
+        </p>
       }
     >
       <LoginForm />
