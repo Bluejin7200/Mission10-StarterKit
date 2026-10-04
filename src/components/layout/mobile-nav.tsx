@@ -15,8 +15,12 @@ import {
 } from "@/components/ui/sheet"
 import { siteConfig } from "@/config/site"
 
+type MobileNavProps = {
+  isLoggedIn: boolean
+}
+
 // 모바일(md 미만) 전용 슬라이드 메뉴
-export function MobileNav() {
+export function MobileNav({ isLoggedIn }: MobileNavProps) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
 
@@ -52,16 +56,24 @@ export function MobileNav() {
         </nav>
         <Separator />
         <div className="flex flex-col gap-2 px-4">
-          <Link
-            href="/login"
-            onClick={close}
-            className={buttonVariants({ variant: "outline" })}
-          >
-            로그인
-          </Link>
-          <Link href="/dashboard" onClick={close} className={buttonVariants()}>
-            대시보드
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/dashboard" onClick={close} className={buttonVariants()}>
+              대시보드
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                onClick={close}
+                className={buttonVariants({ variant: "outline" })}
+              >
+                로그인
+              </Link>
+              <Link href="/signup" onClick={close} className={buttonVariants()}>
+                회원가입
+              </Link>
+            </>
+          )}
         </div>
       </SheetContent>
     </Sheet>

@@ -3,12 +3,17 @@ import Link from "next/link"
 
 import { LoginForm } from "@/components/auth/login-form"
 import { AuthCard } from "@/components/layout/auth-card"
+import { getSafeRedirect } from "@/lib/auth/session"
 
 export const metadata: Metadata = {
   title: "로그인",
 }
 
-export default function LoginPage() {
+export default async function LoginPage({ searchParams }: PageProps<"/login">) {
+  // proxy가 붙여준 next 파라미터 (배열이면 첫 값만 사용)
+  const { next } = await searchParams
+  const redirectTo = getSafeRedirect(Array.isArray(next) ? next[0] : next)
+
   return (
     <AuthCard
       title="로그인"
@@ -22,7 +27,7 @@ export default function LoginPage() {
         </p>
       }
     >
-      <LoginForm />
+      <LoginForm redirectTo={redirectTo} />
     </AuthCard>
   )
 }
