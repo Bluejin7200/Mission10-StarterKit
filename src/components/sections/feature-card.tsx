@@ -1,6 +1,4 @@
-import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
-import { ArrowRight } from "lucide-react"
 
 import {
   Card,
@@ -14,12 +12,12 @@ type FeatureCardProps = {
   icon: LucideIcon
   title: string
   description: string
-  // 지정하면 "예제 보기" 링크 표시
-  href?: string
+  // 카드 하단 행동 요소 (예: 예제 미리보기 칩)
+  action?: React.ReactNode
 }
 
 // 아이콘 + 제목 + 설명으로 구성된 기능 카드
-export function FeatureCard({ icon: Icon, title, description, href }: FeatureCardProps) {
+export function FeatureCard({ icon: Icon, title, description, action }: FeatureCardProps) {
   return (
     <Card className="h-full transition-shadow hover:shadow-md">
       <CardHeader>
@@ -29,17 +27,7 @@ export function FeatureCard({ icon: Icon, title, description, href }: FeatureCar
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      {href && (
-        <CardFooter className="mt-auto">
-          <Link
-            href={href}
-            className="group/link inline-flex items-center gap-1 text-sm font-medium text-primary"
-          >
-            예제 보기
-            <ArrowRight className="size-4 transition group-hover/link:translate-x-1" />
-          </Link>
-        </CardFooter>
-      )}
+      {action && <CardFooter className="mt-auto">{action}</CardFooter>}
     </Card>
   )
 }

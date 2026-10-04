@@ -27,6 +27,8 @@ export type ExampleFeature = {
   title: string
   description: string
   icon: LucideIcon
+  // 홈 기능 카드 호버 팝업에 보여줄 대표 예제 id (시각적으로 결과가 잘 드러나는 예제)
+  featured: string
   examples: ExampleMeta[]
   // 이 프로젝트에서 실제로 사용 중인 화면
   usedIn: { label: string; href: string }[]
@@ -35,6 +37,7 @@ export type ExampleFeature = {
 export const exampleFeatures: ExampleFeature[] = [
   {
     slug: "nextjs",
+    featured: "server-client",
     title: "Next.js App Router",
     description: "서버 컴포넌트와 파일 기반 라우팅으로 빠르게 페이지를 구성합니다.",
     icon: Rocket,
@@ -58,6 +61,7 @@ export const exampleFeatures: ExampleFeature[] = [
   },
   {
     slug: "typescript",
+    featured: "generic-component",
     title: "TypeScript",
     description: "엄격한 타입 검사로 안전하고 유지보수하기 쉬운 코드를 작성합니다.",
     icon: ShieldCheck,
@@ -77,6 +81,7 @@ export const exampleFeatures: ExampleFeature[] = [
   },
   {
     slug: "tailwind",
+    featured: "state-variants",
     title: "Tailwind CSS",
     description: "유틸리티 클래스와 디자인 토큰으로 일관된 스타일을 유지합니다.",
     icon: Palette,
@@ -96,6 +101,7 @@ export const exampleFeatures: ExampleFeature[] = [
   },
   {
     slug: "shadcn-ui",
+    featured: "data-display",
     title: "shadcn/ui",
     description: "복사해서 소유하는 접근성 높은 컴포넌트를 자유롭게 커스터마이징합니다.",
     icon: Layers,
@@ -123,6 +129,7 @@ export const exampleFeatures: ExampleFeature[] = [
   },
   {
     slug: "forms",
+    featured: "basic-form",
     title: "React Hook Form + Zod",
     description: "스키마 기반 검증과 재사용 가능한 폼 필드 컴포넌트를 제공합니다.",
     icon: FormInput,
@@ -150,6 +157,7 @@ export const exampleFeatures: ExampleFeature[] = [
   },
   {
     slug: "state",
+    featured: "query-status",
     title: "Zustand + TanStack Query",
     description: "클라이언트 상태와 서버 상태를 각각 알맞은 도구로 관리합니다.",
     icon: Database,
@@ -177,6 +185,7 @@ export const exampleFeatures: ExampleFeature[] = [
   },
   {
     slug: "dark-mode",
+    featured: "theme-switcher",
     title: "다크 모드",
     description: "next-themes 기반 라이트/다크/시스템 테마를 기본 제공합니다.",
     icon: Moon,
@@ -191,6 +200,7 @@ export const exampleFeatures: ExampleFeature[] = [
   },
   {
     slug: "responsive",
+    featured: "responsive-grid",
     title: "반응형 레이아웃",
     description: "모바일 메뉴, 접히는 사이드바, 반응형 그리드로 모든 화면에 대응합니다.",
     icon: Smartphone,
@@ -212,6 +222,7 @@ export const exampleFeatures: ExampleFeature[] = [
   },
   {
     slug: "animation",
+    featured: "stagger",
     title: "애니메이션",
     description: "motion 기반 스크롤 등장·순차 등장·숫자 카운트업을 재사용 컴포넌트로 제공합니다.",
     icon: Sparkles,
@@ -239,6 +250,11 @@ export const exampleFeatures: ExampleFeature[] = [
 /** 예제의 코드 파일 목록 */
 export function getExampleFiles(example: ExampleMeta) {
   return example.files ?? [`${example.id}.tsx`]
+}
+
+/** 기능의 대표 예제 (featured가 잘못되면 첫 번째 예제) */
+export function getFeaturedExample(feature: ExampleFeature) {
+  return feature.examples.find((e) => e.id === feature.featured) ?? feature.examples[0]
 }
 
 export function getExampleFeature(slug: string) {

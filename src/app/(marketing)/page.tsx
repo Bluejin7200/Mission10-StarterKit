@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
+import { ExamplePeek } from "@/components/examples/example-peek"
 import { Cta } from "@/components/sections/cta"
 import { Faq, type FaqItem } from "@/components/sections/faq"
 import { FeatureGrid, type Feature } from "@/components/sections/feature-grid"
@@ -18,12 +19,13 @@ const stats: StatItem[] = [
   { label: "지원 테마", value: "3" },
 ]
 
-// 랜딩 페이지에 노출할 기능 목록 (예제 레지스트리와 공유, 카드마다 예제 링크)
-const features: Feature[] = exampleFeatures.map(({ slug, title, description, icon }) => ({
-  icon,
-  title,
-  description,
-  href: `/examples/${slug}`,
+// 랜딩 페이지에 노출할 기능 목록 (예제 레지스트리와 공유)
+// 카드에는 "예제" 칩을 달고, 호버 시 대표 예제 결과를 미리 보여줌 → 상세는 /examples에서
+const features: Feature[] = exampleFeatures.map((feature) => ({
+  icon: feature.icon,
+  title: feature.title,
+  description: feature.description,
+  action: <ExamplePeek feature={feature} />,
 }))
 
 // 자주 묻는 질문
@@ -90,7 +92,7 @@ export default function Home() {
       <FeatureGrid
         id="features"
         title="포함된 기능"
-        description="프로젝트에 바로 필요한 구성이 갖춰져 있습니다."
+        description="프로젝트에 바로 필요한 구성이 갖춰져 있습니다. 카드의 예제 버튼에 마우스를 올리면 결과를 미리 볼 수 있습니다."
         features={features}
       />
 
