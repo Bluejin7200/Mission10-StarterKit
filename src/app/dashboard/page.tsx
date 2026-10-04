@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react"
 import { Activity, CreditCard, ShoppingCart, Users } from "lucide-react"
 
 import { PageHeader } from "@/components/common/page-header"
+import { Stagger, StaggerItem } from "@/components/motion/stagger"
 import { OrderStatusBadge } from "@/components/orders/order-status-badge"
 import { buttonVariants } from "@/components/ui/button"
 import {
@@ -53,20 +54,22 @@ export default function DashboardPage() {
       <PageHeader title="대시보드" description="서비스 현황을 한눈에 확인하세요." />
 
       {/* 통계 카드: 모바일 1열 → 태블릿 2열 → 데스크톱 4열 */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <Stagger immediate className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardDescription>{stat.title}</CardDescription>
-              <stat.icon className="size-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
-              <p className="text-xs text-muted-foreground">지난달 대비 {stat.change}</p>
-            </CardContent>
-          </Card>
+          <StaggerItem key={stat.title}>
+            <Card className="h-full">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardDescription>{stat.title}</CardDescription>
+                <stat.icon className="size-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">지난달 대비 {stat.change}</p>
+              </CardContent>
+            </Card>
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
 
       <Card>
         <CardHeader>

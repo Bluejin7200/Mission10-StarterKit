@@ -91,7 +91,7 @@ export function OrdersTable() {
                 </TableRow>
               ) : (
                 data.items.map((order) => (
-                  <TableRow key={order.id}>
+                  <TableRow key={order.id} className="animate-in duration-300 fade-in">
                     <TableCell className="font-medium">{order.id}</TableCell>
                     <TableCell>
                       <div className="flex flex-col">

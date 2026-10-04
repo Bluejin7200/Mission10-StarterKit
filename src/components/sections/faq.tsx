@@ -1,5 +1,6 @@
 import { SectionHeading } from "@/components/common/section-heading"
 import { Section } from "@/components/layout/section"
+import { FadeIn } from "@/components/motion/fade-in"
 import {
   Accordion,
   AccordionContent,
@@ -28,15 +29,19 @@ export function Faq({
 }: FaqProps) {
   return (
     <Section id={id} className="border-t" containerClassName="max-w-3xl">
-      <SectionHeading title={title} description={description} />
-      <Accordion>
-        {items.map((item) => (
-          <AccordionItem key={item.question} value={item.question}>
-            <AccordionTrigger>{item.question}</AccordionTrigger>
-            <AccordionContent>{item.answer}</AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+      <FadeIn>
+        <SectionHeading title={title} description={description} />
+      </FadeIn>
+      <FadeIn delay={0.1}>
+        <Accordion>
+          {items.map((item) => (
+            <AccordionItem key={item.question} value={item.question}>
+              <AccordionTrigger>{item.question}</AccordionTrigger>
+              <AccordionContent>{item.answer}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </FadeIn>
     </Section>
   )
 }

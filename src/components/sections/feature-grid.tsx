@@ -2,6 +2,8 @@ import type { LucideIcon } from "lucide-react"
 
 import { SectionHeading } from "@/components/common/section-heading"
 import { Section } from "@/components/layout/section"
+import { FadeIn } from "@/components/motion/fade-in"
+import { Stagger, StaggerItem } from "@/components/motion/stagger"
 import { FeatureCard } from "@/components/sections/feature-card"
 
 export type Feature = {
@@ -21,12 +23,16 @@ type FeatureGridProps = {
 export function FeatureGrid({ id, title, description, features }: FeatureGridProps) {
   return (
     <Section id={id} className="border-t">
-      <SectionHeading title={title} description={description} />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <FadeIn>
+        <SectionHeading title={title} description={description} />
+      </FadeIn>
+      <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => (
-          <FeatureCard key={feature.title} {...feature} />
+          <StaggerItem key={feature.title}>
+            <FeatureCard {...feature} />
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
     </Section>
   )
 }
