@@ -1,69 +1,123 @@
-import Image from "next/image";
+import Link from "next/link"
+import {
+  ArrowRight,
+  Layers,
+  Moon,
+  Palette,
+  Rocket,
+  ShieldCheck,
+  Smartphone,
+  Terminal,
+} from "lucide-react"
+
+import { FeatureCard } from "@/components/home/feature-card"
+import { ToastDemoButton } from "@/components/home/toast-demo-button"
+import { Container } from "@/components/layout/container"
+import { Badge } from "@/components/ui/badge"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+
+// 랜딩 페이지에 노출할 기능 목록
+const features = [
+  {
+    icon: Rocket,
+    title: "Next.js App Router",
+    description: "서버 컴포넌트와 파일 기반 라우팅으로 빠르게 페이지를 구성합니다.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "TypeScript",
+    description: "엄격한 타입 검사로 안전하고 유지보수하기 쉬운 코드를 작성합니다.",
+  },
+  {
+    icon: Palette,
+    title: "Tailwind CSS",
+    description: "유틸리티 클래스와 디자인 토큰으로 일관된 스타일을 유지합니다.",
+  },
+  {
+    icon: Layers,
+    title: "shadcn/ui",
+    description: "복사해서 소유하는 접근성 높은 컴포넌트를 자유롭게 커스터마이징합니다.",
+  },
+  {
+    icon: Moon,
+    title: "다크 모드",
+    description: "next-themes 기반 라이트/다크/시스템 테마를 기본 제공합니다.",
+  },
+  {
+    icon: Smartphone,
+    title: "반응형 레이아웃",
+    description: "모바일 메뉴와 반응형 그리드로 모든 화면 크기에 대응합니다.",
+  },
+]
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      {/* 히어로 섹션 */}
+      <section className="relative overflow-hidden">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,var(--color-muted),transparent_60%)]"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+        <Container className="flex flex-col items-center gap-6 py-20 text-center sm:py-28 lg:py-32">
+          <Badge variant="secondary">Next.js · TypeScript · shadcn/ui</Badge>
+          <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+            아이디어를 가장 빠르게
+            <br className="hidden sm:block" /> 웹으로 만드는 스타터킷
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="max-w-2xl text-base text-muted-foreground text-pretty sm:text-lg">
+            검증된 기술 스택과 기본 레이아웃이 준비되어 있습니다. 설정은 건너뛰고
+            바로 페이지 제작을 시작하세요.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+          <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
+            <Link
+              href="#get-started"
+              className={cn(buttonVariants({ size: "lg" }), "px-4")}
+            >
+              시작하기 <ArrowRight />
+            </Link>
+            <ToastDemoButton />
+          </div>
+        </Container>
+      </section>
+
+      {/* 기능 섹션 */}
+      <section id="features" className="scroll-mt-14 border-t py-16 sm:py-24">
+        <Container>
+          <div className="mb-10 text-center">
+            <h2 className="text-3xl font-bold tracking-tight">포함된 기능</h2>
+            <p className="mt-2 text-muted-foreground">
+              프로젝트에 바로 필요한 구성이 갖춰져 있습니다.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature) => (
+              <FeatureCard key={feature.title} {...feature} />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* 시작하기 섹션 */}
+      <section id="get-started" className="scroll-mt-14 border-t py-16 sm:py-24">
+        <Container className="flex flex-col items-center gap-6 text-center">
+          <h2 className="text-3xl font-bold tracking-tight">시작하기</h2>
+          <p className="max-w-xl text-muted-foreground">
+            개발 서버를 실행하고, 필요한 컴포넌트를 추가하세요.
+          </p>
+          <div className="w-full max-w-xl space-y-2 rounded-lg border bg-muted/50 p-4 text-left font-mono text-sm">
+            <p className="flex items-center gap-2">
+              <Terminal className="size-4 shrink-0 text-muted-foreground" />
+              <span>npm run dev</span>
+            </p>
+            <p className="flex items-center gap-2">
+              <Terminal className="size-4 shrink-0 text-muted-foreground" />
+              <span className="break-all">npx shadcn@latest add dialog</span>
+            </p>
+          </div>
+        </Container>
+      </section>
+    </>
+  )
 }
