@@ -4,7 +4,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { Menu } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
   SheetContent,
@@ -17,6 +18,7 @@ import { siteConfig } from "@/config/site"
 // 모바일(md 미만) 전용 슬라이드 메뉴
 export function MobileNav() {
   const [open, setOpen] = useState(false)
+  const close = () => setOpen(false)
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -41,13 +43,26 @@ export function MobileNav() {
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => setOpen(false)}
+              onClick={close}
               className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
             >
               {item.title}
             </Link>
           ))}
         </nav>
+        <Separator />
+        <div className="flex flex-col gap-2 px-4">
+          <Link
+            href="/login"
+            onClick={close}
+            className={buttonVariants({ variant: "outline" })}
+          >
+            로그인
+          </Link>
+          <Link href="/dashboard" onClick={close} className={buttonVariants()}>
+            대시보드
+          </Link>
+        </div>
       </SheetContent>
     </Sheet>
   )

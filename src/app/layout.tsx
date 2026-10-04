@@ -1,9 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 
-import { Footer } from "@/components/layout/footer"
-import { Header } from "@/components/layout/header"
-import { ThemeProvider } from "@/components/theme-provider"
+import { Providers } from "@/components/providers"
 import { Toaster } from "@/components/ui/sonner"
 import { siteConfig } from "@/config/site"
 import "./globals.css"
@@ -35,17 +33,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+        <Providers>
+          {children}
           <Toaster richColors />
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   )
