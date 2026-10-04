@@ -15,7 +15,8 @@ import { Input } from "@/components/ui/input"
 type FormInputProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
-> = BaseFormFieldProps<TFieldValues, TName> &
+  TTransformedValues = TFieldValues,
+> = BaseFormFieldProps<TFieldValues, TName, TTransformedValues> &
   Pick<
     React.ComponentProps<"input">,
     "type" | "placeholder" | "autoComplete" | "inputMode"
@@ -25,6 +26,7 @@ type FormInputProps<
 export function FormInput<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
+  TTransformedValues = TFieldValues,
 >({
   control,
   name,
@@ -32,7 +34,7 @@ export function FormInput<
   description,
   disabled,
   ...inputProps
-}: FormInputProps<TFieldValues, TName>) {
+}: FormInputProps<TFieldValues, TName, TTransformedValues>) {
   const id = useId()
 
   return (

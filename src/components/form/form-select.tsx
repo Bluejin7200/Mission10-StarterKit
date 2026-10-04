@@ -26,7 +26,8 @@ export type SelectOption = {
 type FormSelectProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
-> = BaseFormFieldProps<TFieldValues, TName> & {
+  TTransformedValues = TFieldValues,
+> = BaseFormFieldProps<TFieldValues, TName, TTransformedValues> & {
   options: SelectOption[]
   placeholder?: string
 }
@@ -35,6 +36,7 @@ type FormSelectProps<
 export function FormSelect<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
+  TTransformedValues = TFieldValues,
 >({
   control,
   name,
@@ -43,7 +45,7 @@ export function FormSelect<
   disabled,
   options,
   placeholder = "선택하세요",
-}: FormSelectProps<TFieldValues, TName>) {
+}: FormSelectProps<TFieldValues, TName, TTransformedValues>) {
   const id = useId()
 
   return (

@@ -15,13 +15,15 @@ import { Textarea } from "@/components/ui/textarea"
 type FormTextareaProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
-> = BaseFormFieldProps<TFieldValues, TName> &
+  TTransformedValues = TFieldValues,
+> = BaseFormFieldProps<TFieldValues, TName, TTransformedValues> &
   Pick<React.ComponentProps<"textarea">, "placeholder" | "rows">
 
 // React Hook Form과 연결된 여러 줄 입력 필드
 export function FormTextarea<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
+  TTransformedValues = TFieldValues,
 >({
   control,
   name,
@@ -29,7 +31,7 @@ export function FormTextarea<
   description,
   disabled,
   ...textareaProps
-}: FormTextareaProps<TFieldValues, TName>) {
+}: FormTextareaProps<TFieldValues, TName, TTransformedValues>) {
   const id = useId()
 
   return (

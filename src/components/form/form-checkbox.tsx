@@ -17,13 +17,14 @@ import {
 export function FormCheckbox<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
+  TTransformedValues = TFieldValues,
 >({
   control,
   name,
   label,
   description,
   disabled,
-}: BaseFormFieldProps<TFieldValues, TName>) {
+}: BaseFormFieldProps<TFieldValues, TName, TTransformedValues>) {
   const id = useId()
 
   return (
