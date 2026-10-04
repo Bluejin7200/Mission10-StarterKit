@@ -24,13 +24,14 @@ export function MainNav() {
 
   return (
     <NavigationMenu className="hidden md:flex">
-      <NavigationMenuList>
+      {/* 메뉴 간격·크기 통일: 목록 gap-1, 각 링크 높이 h-9·최소 폭 w-16·가운데 정렬 */}
+      <NavigationMenuList className="gap-1">
         {siteConfig.mainNav.map((item) => (
           <NavigationMenuItem key={item.href}>
             <NavigationMenuLink
               active={isActive(pathname, item.href)}
               render={<Link href={item.href} />}
-              className="px-3 text-muted-foreground hover:text-foreground data-active:text-foreground"
+              className="h-9 min-w-16 justify-center px-3 text-muted-foreground hover:text-foreground data-active:font-medium data-active:text-foreground"
             >
               {item.title}
             </NavigationMenuLink>
