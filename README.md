@@ -54,6 +54,7 @@ npm run dev                  # http://localhost:3000
 | 이름 | 설명 | 기본값 |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | 사이트 공개 주소 (메타데이터 기준 URL) | `http://localhost:3000` |
+| `SESSION_SECRET` | 세션 쿠키 서명 키 (32자 이상, 서버 전용). **운영 환경 필수** — `openssl rand -base64 32`로 생성 | 개발 환경에서만 기본 키 사용 |
 
 환경변수는 `src/lib/env.ts`의 Zod 스키마로 검증됩니다. 새 변수를 추가할 때는 `.env.example`과 스키마를 함께 수정하세요.
 
@@ -61,12 +62,14 @@ npm run dev                  # http://localhost:3000
 
 로그인은 데모용이라 **형식만 맞으면 어떤 이메일·비밀번호로도** 로그인됩니다. (예: `demo@example.com` / 아무 비밀번호)
 
+> 로컬에서 `npm run build && npm start`(운영 모드)로 실행할 때도 `SESSION_SECRET`이 필요합니다. 없으면 로그인 시 오류가 납니다.
+
 ## 라우트
 
 | 경로 | 설명 | 접근 |
 | --- | --- | --- |
 | `/` | 랜딩 페이지 (Hero, 통계, 기능, FAQ, CTA) | 누구나 |
-| `/examples` | 기능별 예제 목록 | 누구나 |
+| `/examples` | 예제 인덱스: 21개 예제를 기능별로 나열 + 검색 | 누구나 |
 | `/examples/[기능]` | 기능별 동작 예제 + 소스 코드 (9개 기능, 21개 예제) | 누구나 |
 | `/login` | 로그인 | 비로그인 사용자 |
 | `/signup` | 회원가입 | 비로그인 사용자 |
@@ -74,7 +77,6 @@ npm run dev                  # http://localhost:3000
 | `/dashboard/orders` | 주문 목록 (검색·필터·페이지네이션) | 로그인 필요 |
 | `/dashboard/settings` | 환경설정 | 로그인 필요 |
 | `/api/auth/login` · `signup` · `logout` | 인증 API (POST) | — |
-| `/api/auth/session` | 현재 로그인 사용자 조회 (GET) | — |
 | `/api/orders` | 주문 목록 API (GET) | 로그인 필요 |
 
 - 로그인하지 않고 `/dashboard`에 접근하면 `src/proxy.ts`가 `/login?next=원래경로`로 보내고, 로그인 후 원래 페이지로 돌아옵니다.
@@ -122,11 +124,14 @@ src/
 
 ## 주요 기능
 
-- **인증 흐름**: 로그인·회원가입·로그아웃, httpOnly 세션 쿠키, 경로 보호, 로그인 후 원래 페이지 복귀, 오픈 리다이렉트 방지
+- **인증 흐름**: 로그인·회원가입·로그아웃, HMAC 서명·만료 시각이 담긴 httpOnly 세션 쿠키(위조·연장 불가), 경로 보호, 로그인 후 원래 페이지 복귀, 오픈 리다이렉트 방지
 - **데이터 목록**: TanStack Query로 조회, 검색어(디바운스)·상태 필터·페이지를 URL에 동기화 → 새로고침·링크 공유 시 조건 유지, 로딩 스켈레톤·빈 상태·에러 재시도
-- **폼**: Zod 스키마 + React Hook Form 필드 컴포넌트, 한국어 오류 메시지
+- **폼**: Zod 스키마 + React Hook Form 필드 컴포넌트, 한국어 오류 메시지. 입력값과 검증 후 값의 타입이 다른 스키마(예: 문자열 → 숫자 변환)도 지원
 - **환경설정**: Zustand persist로 localStorage 저장, 설정한 표시 이름을 사이드바에 반영
-- **기능별 예제**: 기능마다 1~3개의 동작 예제, 미리보기/코드 탭, 코드 복사. 코드 탭은 실제 예제 파일을 빌드 시 읽어 표시하므로 설명과 코드가 어긋나지 않음
+- **기능별 예제**: 역할을 나눠 중복 없이 구성
+  - 홈 "기능" 섹션: 무엇이 있는지 훑어보기. 카드의 **예제 칩에 마우스를 올리면 대표 예제 결과 화면**이 팝업 (터치 기기는 탭하면 이동)
+  - `/examples`: 어떻게 쓰는지 찾기. 21개 예제를 기능별로 바로 나열하고 검색으로 좁힘
+  - `/examples/[기능]`: 예제별 미리보기/코드 탭, 코드 복사. 코드 탭은 실제 예제 파일을 빌드 시 읽어 표시하므로 설명과 코드가 어긋나지 않음
 - **커맨드 팔레트**: `⌘K` / `Ctrl+K`로 페이지 이동·예제 검색·테마 전환 (헤더 어디서나)
 - **애니메이션**: 스크롤 진입 페이드, 카드 순차 등장, 숫자 카운트업. OS의 "동작 줄이기" 설정을 존중
 - **반응형**: 모바일 메뉴(Sheet), 모바일에서 자동으로 Sheet로 바뀌는 사이드바, 반응형 그리드
@@ -170,7 +175,7 @@ export default function ReportsPage() {
 ### 예제 추가
 
 1. `src/examples/<기능 slug>/<예제 id>.tsx`에 예제 컴포넌트를 `export default`로 작성합니다. (복사해 쓸 수 있도록 한 파일에서 완결되게)
-2. `src/config/examples.ts`의 해당 기능 `examples`에 `{ id, title, description }`을 추가합니다. 보조 파일이 있으면 `files`에 함께 적습니다.
+2. `src/config/examples.ts`의 해당 기능 `examples`에 `{ id, title, description }`을 추가합니다. 보조 파일이 있으면 `files`에 함께 적습니다. 홈 호버 팝업에 보여줄 대표 예제는 기능의 `featured`로 지정합니다.
 3. `src/examples/registry.tsx`의 `exampleComponents`에 `"<slug>/<id>": 컴포넌트`를 등록합니다.
 4. `npm test`의 레지스트리 무결성 테스트가 파일 누락·미등록·id 중복을 검사합니다.
 
@@ -211,13 +216,13 @@ import { Stagger, StaggerItem } from "@/components/motion/stagger"
 
 | 교체 대상 | 현재 구현 | 바꿀 내용 |
 | --- | --- | --- |
-| `src/lib/auth/session.ts` | 서명 없는 base64 JSON 쿠키 | **반드시 교체.** 서명·암호화된 토큰(JWT, iron-session) 또는 인증 서비스(Auth.js, Supabase 등)의 세션 |
+| `src/lib/auth/session.ts` | HMAC-SHA256 서명 + 만료 시각을 담은 쿠키 (사용자 정보는 암호화되지 않고 읽을 수 있음) | 사용자 DB·권한·세션 무효화(강제 로그아웃)가 필요하면 인증 서비스(Auth.js, Supabase 등) 또는 암호화 세션(iron-session)으로 교체 |
 | `src/app/api/auth/*` | 형식만 맞으면 로그인 성공 | 실제 사용자 조회·비밀번호 검증·사용자 생성 |
 | `src/lib/mock/orders.ts` | 시드 고정 목업 50건 | DB 조회 (조회 조건 타입 `OrdersQuery`는 그대로 사용 가능) |
 | `src/lib/api/*` | 내부 Route Handler 호출 | 외부 API를 직접 호출하려면 이 파일들만 수정 |
 | `src/app/dashboard/page.tsx` | 통계 카드 하드코딩 | 실제 집계 데이터 |
 
-> ⚠️ 현재 세션 쿠키는 서명이 없어 **사용자가 임의로 만들 수 있습니다.** 데모·학습용으로만 사용하고, 실제 서비스 전에는 반드시 교체하세요.
+> ℹ️ 세션 쿠키는 서명되어 위조·만료 연장이 불가능하지만, **로그인 자체는 데모(아무 계정이나 통과)**입니다. 실제 서비스에서는 `src/app/api/auth/*`에 사용자 조회·비밀번호 검증을 반드시 구현하세요. 헤더 표시용 `logged_in` 쿠키는 힌트일 뿐이고 권한 확인에는 쓰지 않습니다.
 
 ## 테스트
 
