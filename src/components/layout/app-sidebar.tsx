@@ -56,8 +56,9 @@ export function AppSidebar({ user }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
+        {/* 로고는 사이트 공통 규칙대로 메인 페이지로 이동 (대시보드 홈은 아래 메뉴로 이동) */}
         <Logo
-          href="/dashboard"
+          href="/"
           className="h-8 px-2 group-data-[collapsible=icon]:px-1.5 group-data-[collapsible=icon]:[&>span]:hidden"
         />
       </SidebarHeader>
