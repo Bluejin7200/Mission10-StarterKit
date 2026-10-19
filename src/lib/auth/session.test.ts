@@ -59,6 +59,8 @@ describe("getSafeRedirect", () => {
     ["외부 URL", "https://evil.com"],
     ["프로토콜 상대 URL", "//evil.com"],
     ["상대 경로", "dashboard"],
+    ["백슬래시 우회", "/\\evil.com"],
+    ["탭 우회", "/\t/evil.com"],
   ])("안전하지 않은 값(%s)은 기본 경로로 바꾼다", (_, next) => {
     expect(getSafeRedirect(next)).toBe("/dashboard")
   })

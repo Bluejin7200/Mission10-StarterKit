@@ -79,5 +79,14 @@ export function decodeSession(value: string | undefined, now = Date.now()): Sess
 /** 로그인 후 이동할 경로 검증 (외부 URL로의 오픈 리다이렉트 방지) */
 export function getSafeRedirect(next: string | null | undefined, fallback = "/dashboard") {
   if (!next || !next.startsWith("/") || next.startsWith("//")) return fallback
+  // 브라우저가 "/"로 바꾸는 백슬래시, 파싱 시 제거되는 탭·개행 등 제어문자 차단 ("/\evil.com" 우회 방지)
+  if (/[\\\u0000-\u001f]/.test(next)) return fallback
+  // 임의 origin 기준으로 해석했을 때 origin이 바뀌면 외부 URL
+  const base = "http://localhost"
+  try {
+    if (new URL(next, base).origin !== base) return fallback
+  } catch {
+    return fallback
+  }
   return next
 }
