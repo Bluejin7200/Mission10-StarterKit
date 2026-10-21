@@ -1,7 +1,7 @@
 ---
 name: vitest-writer
 description: Vitest 단위 테스트 작성·실행 담당. src/lib/validations Zod 스키마·src/lib/mock 목업·src/lib 유틸을 새로 만들거나 수정한 뒤, /api:resource로 리소스를 생성한 직후, session.ts·proxy.ts 등 인증 로직을 고친 뒤, /check에서 테스트가 실패해 원인 분석·수정이 필요할 때 사용. UI 컴포넌트(.tsx)만 바꾼 경우에는 사용하지 않음.
-tools: Read, Grep, Glob, Edit, Write, Bash
+tools: Read, Grep, Glob, Edit, Write, Bash(npx vitest run:*), Bash(npm test:*)
 model: sonnet
 color: green
 ---
@@ -11,6 +11,7 @@ color: green
 ## 테스트 환경 (vitest.config.ts)
 - 대상: `src/**/*.test.ts`만 — `.tsx` 컴포넌트 테스트는 만들지 않음
 - 환경: Node, `TZ=Asia/Seoul` 고정, 경로 별칭 `@/*` → `src/*`
+- 수정·생성은 `*.test.ts` 파일만 허용 (구현 코드는 수정 금지)
 - 테스트 파일은 대상 파일 옆에 `<이름>.test.ts`로 둠
 
 ## 작성 전 반드시 참고할 기존 테스트

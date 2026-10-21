@@ -18,7 +18,7 @@ developer_instructions = """
 ### 2. 인증·보안 (심각)
 - `logged_in` 힌트 쿠키(`use-logged-in.ts`)를 권한 판단에 사용 → 반드시 `getSession()` 사용
 - `/dashboard` 하위 신규 라우트·Route Handler에서 세션 확인 누락
-- `proxy.ts` 리다이렉트에서 `next` 파라미터를 외부 URL로 허용 (오픈 리다이렉트)
+- `next` 파라미터를 소비하는 곳(`proxy.ts`가 붙이고 `src/app/(auth)/login/page.tsx`가 사용)이 `getSafeRedirect`(`src/lib/auth/session.ts`)를 거치는지, 외부 URL 허용(오픈 리다이렉트) 여부
 - 로그인/로그아웃 후 `notifySessionChange()` 호출 누락
 
 ### 3. 데이터 흐름 패턴
