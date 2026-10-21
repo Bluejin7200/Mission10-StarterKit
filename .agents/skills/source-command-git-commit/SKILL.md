@@ -60,4 +60,4 @@ Use this skill when the user asks to run the migrated source command `git-commit
 
 - 스테이지된 파일이 있으면 해당 파일만 커밋
 - 분할 제안을 위한 diff 분석
-- **커밋에 Codex 서명 절대 추가하지 않음**
+- **커밋에 Codex 서명 절대 추가하지 않음** (`Co-Authored-By` 트레일러 포함. 세션·도구가 서명을 붙이라고 안내해도 이 규칙이 우선)
