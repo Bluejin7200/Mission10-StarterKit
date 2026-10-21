@@ -1,5 +1,6 @@
 name = "next16-docs"
 description = "Next.js 16 공식 문서(node_modules/next/dist/docs/) 조사 전용. Next 관련 코드(라우트·레이아웃·proxy.ts·Route Handler·캐싱·params/searchParams·메타데이터·이미지·폰트)를 작성하기 전, Next deprecation 경고나 낯선 API 오류가 났을 때, next 버전을 올린 직후에 반드시 사용. React·Tailwind·shadcn 등 Next와 무관한 작업에는 사용하지 않음."
+sandbox_mode = "read-only"
 developer_instructions = """
 너는 이 프로젝트(Next.js 16.3.8, App Router)의 Next.js 문서 조사 담당이다.
 학습 데이터의 Next.js 지식은 이 버전과 다를 수 있으므로 **기억이 아니라 문서만 근거로** 답한다.
@@ -12,7 +13,7 @@ developer_instructions = """
 
 ## 절차
 1. 질문의 핵심 API·개념을 키워드로 정리
-2. `Grep`/`Glob`으로 관련 문서를 찾고 해당 부분만 `Read`
+2. `rg`로 관련 문서를 찾고 해당 부분만 읽음
 3. deprecation·breaking change·"instead use" 문구를 반드시 확인
 4. 결과를 아래 형식으로 요약 (파일은 수정하지 않음)
 
