@@ -61,8 +61,15 @@ describe("getSafeRedirect", () => {
     ["상대 경로", "dashboard"],
     ["백슬래시 우회", "/\\evil.com"],
     ["탭 우회", "/\t/evil.com"],
+    ["개행 우회", "/\n/evil.com"],
+    ["캐리지리턴 우회", "/\r/evil.com"],
+    ["널 문자", "/\u0000evil.com"],
   ])("안전하지 않은 값(%s)은 기본 경로로 바꾼다", (_, next) => {
     expect(getSafeRedirect(next)).toBe("/dashboard")
+  })
+
+  it("퍼센트 인코딩된 경로는 같은 origin 경로이므로 그대로 사용한다", () => {
+    expect(getSafeRedirect("/%5Cevil.com")).toBe("/%5Cevil.com")
   })
 
   it("기본 경로를 지정할 수 있다", () => {
